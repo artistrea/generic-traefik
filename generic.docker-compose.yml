@@ -1,0 +1,52 @@
+version: "3.3"
+
+# Alter:
+
+# service-name
+# image-name
+# environment
+# networks
+# volumes
+# db?
+
+# # labels:
+# host-rules
+# router-name (any, uniq)
+# cert-resolver-name (uniq)
+# container-port
+
+services:
+  service-name:
+    image: image-name
+    environment:
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=proxy
+
+      # # http access
+      - traefik.http.routers.router-name.rule=Host(host-rules)
+      - traefik.http.routers.router-name.entrypoints=web
+
+      # # https access
+
+      - traefik.http.routers.router-name-websecure.rule=Host(host-rules)
+      - traefik.http.routers.router-name-websecure.entrypoints=websecure
+      - traefik.http.routers.router-name-websecure.tls=true
+
+      # # Specify to container port
+      - traefik.http.routers.router-name-websecure.service=router-name-service
+      - traefik.http.routers.router-name.service=router-name-service
+      - traefik.http.services.router-name-service.loadbalancer.server.port=container-port
+
+      # # redirect http to https
+
+      - traefik.http.middlewares.router-name-redirect-to-websecure.redirectscheme.scheme=https
+      - traefik.http.routers.router-name.middlewares=router-name-redirect-to-websecure
+
+      # # certResolver for when certificate through traefik needed (see traefik.yml)
+
+      - traefik.http.routers.router-name-websecure.tls.certResolver=cert-resolver-name
+
+    restart: always
+    volumes:
+    networks:

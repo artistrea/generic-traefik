@@ -1,0 +1,16 @@
+version: "3.3"
+
+services:
+  traefik:
+    image: traefik:v2.8
+    container_name: traefik
+
+    ports:
+      - 80:80
+      - 443:443
+      - 3000:443
+      - 8080:8080
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ${PWD}/traefik.yml:/traefik.yml
+      - ${PWD}/letsencrypt:/letsencrypt

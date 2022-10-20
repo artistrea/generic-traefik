@@ -1,0 +1,33 @@
+global:
+  sendAnonymousUsage: false
+
+entryPoints:
+  web:
+    address: :80
+  websecure:
+    address: :443
+
+providers:
+  docker:
+    exposedByDefault: false
+  providersThrottleDuration: 2s
+
+# # Dashboard pra debugging. Segurança falha
+# api:
+#   insecure: true
+#   dashboard: true
+
+log:
+  format: json
+
+accessLog:
+  format: json
+
+certificatesResolvers:
+  cert-resolver-name:
+    acme:
+      caServer: https://acme-staging-v02.api.letsencrypt.org/directory
+      email:
+      storage: $(PWD)/letsencrypt/acme-cert-resolver-name.json
+      httpChallenge:
+        entryPoint: web
